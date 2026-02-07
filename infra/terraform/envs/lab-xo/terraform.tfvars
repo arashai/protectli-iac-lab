@@ -1,0 +1,5 @@
+network_name  = "Pool-wide network associated with eth0"
+pool_name     = "localhost"
+template_name = "Ubuntu 24.04 Cloud-Init (Hub)"
+sr_name       = "Local storage"
+vm_name       = "tf-test-01"
