@@ -4,7 +4,7 @@ terraform {
   required_providers {
     xenorchestra = {
       source  = "vatesfr/xenorchestra"
-      version = "~> 0.31"
+      version = "~> 0.37"
     }
   }
 }
@@ -67,13 +67,15 @@ resource "xenorchestra_vm" "firewall" {
   template    = data.xenorchestra_template.firewall.id
   cpus        = 2
   memory_max  = 4000000000 # 4 GiB
-  power_state = "Running"
-
+  power_state = "Halted"
+  network {
+    network_id = data.xenorchestra_network.lan.id
+  }
   network {
     network_id = data.xenorchestra_network.wan.id
   }
   network {
-    network_id = data.xenorchestra_network.lan.id
+    network_id = data.xenorchestra_network.mgmt.id
   }
   disk {
     sr_id      = data.xenorchestra_sr.main.id

@@ -18,8 +18,8 @@ variable "XOA_PASSWORD" {
 
 variable "XOA_INSECURE" {
   description = "Whether to skip SSL verification"
-  type        = string
-  sensitive   = false
+  type        = bool
+  default     = true
 }
 
 variable "mgmt_network_name" {

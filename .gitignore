@@ -4,4 +4,4 @@
 *.tfstate.*
 secret.auto.tfvars
 
-.vscode
+.vscode/
