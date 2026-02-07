@@ -9,6 +9,8 @@ jobs:
   terraform:
     name: Terraform checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       matrix:
         env:
@@ -35,6 +37,8 @@ jobs:
   ansible:
     name: Ansible lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: config/ansible
