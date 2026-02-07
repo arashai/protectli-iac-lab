@@ -21,21 +21,34 @@ data "xenorchestra_pool" "lab" {
 }
 
 # --- Network discovery ---
-data "xenorchestra_network" "lan" {
-  name_label = var.network_name
+data "xenorchestra_network" "mgmt" {
+  name_label = var.mgmt_network_name
   pool_id    = data.xenorchestra_pool.lab.id
 }
 output "network_id" {
+  value = data.xenorchestra_network.mgmt.id
+}
+data "xenorchestra_network" "lan" {
+  name_label = var.lan_network_name
+  pool_id    = data.xenorchestra_pool.lab.id
+}
+output "lan_network_id" {
   value = data.xenorchestra_network.lan.id
 }
-
+data "xenorchestra_network" "wan" {
+  name_label = var.wan_network_name
+  pool_id    = data.xenorchestra_pool.lab.id
+}
+output "wan_network_id" {
+  value = data.xenorchestra_network.wan.id
+}
 # --- Template discovery ---
-data "xenorchestra_template" "base" {
-  name_label = var.template_name
+data "xenorchestra_template" "firewall" {
+  name_label = var.firewall_template_name
   pool_id    = data.xenorchestra_pool.lab.id
 }
 output "template_id" {
-  value = data.xenorchestra_template.base.id
+  value = data.xenorchestra_template.firewall.id
 }
 
 # --- Storage discovery ---
@@ -48,26 +61,29 @@ output "sr_id" {
   value = data.xenorchestra_sr.main.id
 }
 
-resource "xenorchestra_vm" "test" {
-  name_label  = var.vm_name
-  template    = data.xenorchestra_template.base.id
-  cpus        = 1
-  memory_max  = 1073741824 # 1 GiB
-  power_state = "Halted"
+# --- Firewall creation ---
+resource "xenorchestra_vm" "firewall" {
+  name_label  = var.firewall_vm_name
+  template    = data.xenorchestra_template.firewall.id
+  cpus        = 2
+  memory_max  = 4000000000 # 4 GiB
+  power_state = "Running"
 
+  network {
+    network_id = data.xenorchestra_network.wan.id
+  }
   network {
     network_id = data.xenorchestra_network.lan.id
   }
-
   disk {
     sr_id      = data.xenorchestra_sr.main.id
     name_label = "root"
-    size       = 10737418240 # 10 GiB
+    size       = 64000000000 # 64 GiB
   }
 
-  tags = ["terraform", "lab", "test"]
+  tags = ["terraform", "firewall", "pfSense"]
 }
 
 output "vm_id" {
-  value = xenorchestra_vm.test.id
+  value = xenorchestra_vm.firewall.id
 }
