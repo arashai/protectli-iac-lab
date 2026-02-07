@@ -9,9 +9,10 @@ jobs:
   terraform:
     name: Terraform checks
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infra/terraform/envs/lab
+    strategy:
+      matrix:
+        env:
+          - infra/terraform/envs/lab-xo
     steps:
       - uses: actions/checkout@v4
 
@@ -20,12 +21,15 @@ jobs:
           terraform_version: "1.7.5"
 
       - name: Terraform fmt
+        working-directory: ${{ matrix.env }}
         run: terraform fmt -check -recursive
 
       - name: Terraform init
+        working-directory: ${{ matrix.env }}
         run: terraform init -backend=false
 
       - name: Terraform validate
+        working-directory: ${{ matrix.env }}
         run: terraform validate
 
   ansible:
