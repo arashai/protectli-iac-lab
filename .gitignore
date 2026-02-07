@@ -2,6 +2,6 @@
 .terraform/
 *.tfstate
 *.tfstate.*
-secrets.auto.tfvars
+secret.auto.tfvars
 
 .vscode
